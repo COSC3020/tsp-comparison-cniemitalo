@@ -1,3 +1,5 @@
+const fs = require('fs'); 
+
 //my implementation of TSP Local Search
 function tsp_ls(distance_matrix) {
     let len = distance_matrix.length; 
@@ -126,3 +128,35 @@ function heldKarp(matrix, current, cities, memo) {
     memo.set(key, min); 
     return min; 
 }
+
+// run tsp-local-search and tsp-held-karp and measure their runtimes 
+function tsp_ls_runtime(distance_matrix) {
+    let start = performance.now(); 
+    let minLength = tsp_ls(distance_matrix); 
+    let end = performance.now(); 
+    let runtime = end - start; 
+
+    return {
+        minLength, 
+        runtime
+    }; 
+} 
+
+function tsp_hk_runtime(distance_matrix) {
+    let start = performance.now(); 
+    let minLength = tsp_hk(distance_matrix); 
+    let end = performance.now(); 
+    let runtime = end - start; 
+
+    return {
+        minLength, 
+        runtime
+    }; 
+}
+
+// main program execution 
+// create matrices
+let lsResult = tsp_ls_runtime(matrix); 
+let hkResult = tsp_hk_runtime(matrix); 
+
+// write results out to a file 
