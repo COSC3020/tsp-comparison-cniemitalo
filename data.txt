@@ -1,0 +1,59 @@
+Size:  1
+Held Karp time: 0.193ms
+Held Karp length:  0
+Local Search time: 0.148ms
+Local Search length:  0
+Size:  2
+Held Karp time: 0.198ms
+Held Karp length:  11
+Local Search time: 0.161ms
+Local Search length:  22
+Size:  3
+Held Karp time: 0.748ms
+Held Karp length:  17
+Local Search time: 0.099ms
+Local Search length:  35
+Size:  4
+Held Karp time: 0.656ms
+Held Karp length:  23
+Local Search time: 0.097ms
+Local Search length:  42
+Size:  5
+Held Karp time: 4.666ms
+Held Karp length:  28
+Local Search time: 0.164ms
+Local Search length:  43
+Size:  6
+Held Karp time: 25.925ms
+Held Karp length:  22
+Local Search time: 0.211ms
+Local Search length:  46
+Size:  7
+Held Karp time: 166.178ms
+Held Karp length:  33
+Local Search time: 0.215ms
+Local Search length:  55
+Size:  8
+Held Karp time: 1.612s
+Held Karp length:  33
+Local Search time: 0.279ms
+Local Search length:  60
+Size:  9
+Held Karp time: 18.417s
+Held Karp length:  21
+Local Search time: 0.211ms
+Local Search length:  40
+Size:  10
+Held Karp time: 6:55.824 (m:ss.mmm)
+Held Karp length:  31
+Local Search time: 0.506ms
+Local Search length:  52
+Size:  11
+Held Karp time: 1:21:59.739 (h:mm:ss.mmm)
+Held Karp length:  33
+Local Search time: 0.455ms
+Local Search length:  77
+
+Size: 6100
+Local Search time: 1:01:19.293 (h:mm:ss.mmm)
+Local search length: 62071
