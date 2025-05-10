@@ -1,5 +1,3 @@
-const fs = require('fs'); 
-
 //my implementation of TSP Local Search
 function tsp_ls(distance_matrix) {
     let len = distance_matrix.length; 
@@ -49,6 +47,7 @@ function calculateLength(route, matrix) {
     for (let i = 0; i < route.length - 1; i++) {
         total += matrix[route[i]][route[i+1]]; 
     }
+    total += matrix[route[route.length -1]][route[0]]; 
     return total; 
 }
 
@@ -61,102 +60,70 @@ function twoOptSwap(route, i, k) {
 }
 
 
-//my implementation of TSP Held Karp 
+//CadeMaynard's implementation of TSP-Held-Karp
+//https://github.com/COSC3020/tsp-held-karp-CadeMaynard
 function tsp_hk(distance_matrix) {
-    let n = distance_matrix.length;  
-    //matrices of length 1 or less have no path
-    if (n <= 1) {
-        return 0; 
+    tsp_mems = [];
+    let nodesLeft = [];
+    if(distance_matrix.length <= 1) {
+        return 0;
+    } else {
+        for(let a = 0; a < distance_matrix.length; a++) //Initializes the nodesLeft array, it is in order from the beginning
+            nodesLeft[a] = a;
+        let min = Infinity;
+        let temp = 0;
+        for(let i = 0; i < distance_matrix.length; i++){
+            temp = tsp_HeldKarp(distance_matrix, i, nodesLeft)
+            if(temp < min)
+                min = temp
     }
-
-    let shortest = Infinity; 
-    let memo = new Map(); 
-
-    for (let start = 0; start < n; start++) {
-        //fill cities with 0, 1, 2, ...
-        let cities = [...Array(n).keys()]; 
-
-        //find the shortest path for this starting point 
-        let length = heldKarp(distance_matrix, start, cities, memo);
-
-        //determine if its the shortest path in the entire matrix 
-        if (length < shortest) {
-            shortest = length; 
-        } 
+    return min
     }
-
-    return shortest; 
 }
 
-function heldKarp(matrix, current, cities, memo) {
-    //create unique key for current city for memoization 
-    const key = JSON.stringify([cities.slice().sort(), current]); 
+function tsp_HeldKarp(distance_matrix, start, nodesLeft) {
+    if(tsp_mems[JSON.stringify(nodesLeft) + start] === undefined) {
+        if(nodesLeft.length < 1) {
+            return 0;
+        } else if(nodesLeft.length == 1) {
+            tsp_mems[JSON.stringify(nodesLeft) + start] = distance_matrix[start][nodesLeft[0]];
+            return tsp_mems[JSON.stringify(nodesLeft) + start];
+        } else {
+            let min = Infinity;
+            let minI = -1;
 
-    //check if length has already been computed
-    //return it's value if so  
-    if (memo.has(key)) {
-        return memo.get(key); 
-    }
+            for(let i = 0; i < nodesLeft.length; i++) {
+                let tempStart = nodesLeft.splice(i,1)                                        //The splice function here removes one item
+                temp = distance_matrix[start][tempStart] + tsp_HeldKarp(distance_matrix, tempStart, nodesLeft.flat(Infinity))    //from the array at the index and returns
+                if(temp < min) {                                                             //that item to the tempStart variable
+                    min = temp;                                                                                                                                                                                           
+                    minI = tempStart;
+                }
+                nodesLeft.splice(i,0,tempStart);                                            //Here, splice is used to reinsert the 
+            }                                                                               //tempStart variable back into the array at
+            tsp_mems[JSON.stringify(nodesLeft) + start] = min;//the same point it was removed. For all
+            return tsp_mems[JSON.stringify(nodesLeft) + start];                             //recursive calls, the function will receive
+        }                                                                                   //a correctly sorted array and anything taken
+                                                                                            //out will be added back in at the same 
+    } else {                                                                                //point. At no point should the array become
+            return tsp_mems[JSON.stringify(nodesLeft) + start];                             //unsorted. So we do not need to worry about
+        }                                                                                   //the memoization not being used for different
+}        
 
-    //base case 
-    if (cities.length === 2) {
-        //find the last city and 
-        let remainingCity = cities.find(c => c !== current); 
-        let distance = matrix[current][remainingCity]; 
-        memo.set(key, distance); 
-        return distance; 
-    }
 
-    let min = Infinity; 
-
-    //iterate through the remaining cities in the matrix 
-    cities.forEach(next => {
-        if (next !== current) {
-            //remaining cities that aren't the current city 
-            //find the shortest path of them 
-            let remaining = cities.filter(c => c !== current); 
-            let distance = matrix[current][next] + heldKarp(matrix, next, remaining, memo); 
-
-            if (distance < min) {
-                min = distance; 
-            }
-        }
-    }); 
-
-    //store the shorest path to save work later 
-    //return the value 
-    memo.set(key, min); 
-    return min; 
-}
-
-// run tsp-local-search and tsp-held-karp and measure their runtimes 
+// run tsp-local-search and tsp-held-karp and print out their runtimes 
 function tsp_ls_runtime(distance_matrix) {
-    let start = performance.now(); 
+    console.time("Local Search time"); 
     let minLength = tsp_ls(distance_matrix); 
-    let end = performance.now(); 
-    let runtime = end - start; 
+    console.timeEnd("Local Search time"); 
 
-    return {
-        minLength, 
-        runtime
-    }; 
+    return minLength; 
 } 
 
 function tsp_hk_runtime(distance_matrix) {
-    let start = performance.now(); 
+    console.time("Held Karp time"); 
     let minLength = tsp_hk(distance_matrix); 
-    let end = performance.now(); 
-    let runtime = end - start; 
+    console.timeEnd("Held Karp time"); 
 
-    return {
-        minLength, 
-        runtime
-    }; 
+    return minLength; 
 }
-
-// main program execution 
-// create matrices
-let lsResult = tsp_ls_runtime(matrix); 
-let hkResult = tsp_hk_runtime(matrix); 
-
-// write results out to a file 
